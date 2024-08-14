@@ -10,7 +10,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
 
 @Entity
 @Table(name="contrato")
@@ -24,11 +23,11 @@ public class Contrato {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cto_id;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Afiliado.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "afi_id")
     private Afiliado afi_id;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = Plan.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "pln_id")
     private Plan pln_id;
 

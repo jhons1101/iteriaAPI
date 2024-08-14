@@ -23,7 +23,7 @@ public class Afiliado {
     private String afi_nombre;
     private String afi_apellidos;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = TipoDocumento.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "tdc_id")
     private TipoDocumento tdc_id;
 
