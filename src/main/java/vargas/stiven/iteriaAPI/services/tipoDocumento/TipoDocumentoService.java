@@ -1,12 +1,12 @@
 package vargas.stiven.iteriaAPI.services.tipoDocumento;
 
-import vargas.stiven.iteriaAPI.entity.TipoDocumento;
+import vargas.stiven.iteriaAPI.dto.TipoDocumentoDTO;
 
 import java.util.List;
 
 public interface TipoDocumentoService {
 
-    List<TipoDocumento> findAll();
+    List<TipoDocumentoDTO> findAll();
 
-    TipoDocumento save(TipoDocumento tipoDoc);
+    TipoDocumentoDTO save(TipoDocumentoDTO tipDoc);
 }
