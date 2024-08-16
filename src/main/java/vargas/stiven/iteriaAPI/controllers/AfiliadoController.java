@@ -3,6 +3,7 @@ package vargas.stiven.iteriaAPI.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vargas.stiven.iteriaAPI.dto.AfiliadoDTO;
 import vargas.stiven.iteriaAPI.entity.Afiliado;
 import vargas.stiven.iteriaAPI.services.afiliado.AfiliadoService;
 
@@ -16,26 +17,26 @@ public class AfiliadoController {
     AfiliadoService afiliadoService;
 
     @GetMapping("/")
-    public List<Afiliado> findAll() {
+    public List<AfiliadoDTO> findAll() {
         return afiliadoService.findAll();
     }
 
     @PostMapping("/")
-    public ResponseEntity save(@RequestBody Afiliado afiliado) throws Exception {
+    public ResponseEntity save(@RequestBody AfiliadoDTO affiliated) {
         try {
-            Afiliado afiliadoDB = afiliadoService.save(afiliado);
+            AfiliadoDTO afiliadoDB = afiliadoService.save(affiliated);
             return ResponseEntity.status(201).body(afiliadoDB);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity update(@PathVariable Long id, @RequestBody Afiliado afiliado) {
+    public ResponseEntity update(@PathVariable Long id, @RequestBody AfiliadoDTO affiliated) {
         try {
-            Afiliado afiliadoDB = afiliadoService.update(id, afiliado);
-            return ResponseEntity.status(200).body(afiliadoDB);
-        } catch (Exception e) {
+            AfiliadoDTO affiliatedDB = afiliadoService.update(id, affiliated);
+            return ResponseEntity.status(200).body(affiliatedDB);
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }

@@ -1,5 +1,6 @@
 package vargas.stiven.iteriaAPI.services.afiliado;
 
+import vargas.stiven.iteriaAPI.dto.AfiliadoDTO;
 import vargas.stiven.iteriaAPI.entity.Afiliado;
 import vargas.stiven.iteriaAPI.entity.TipoDocumento;
 
@@ -9,11 +10,11 @@ import java.util.Optional;
 
 public interface AfiliadoService {
 
-    List<Afiliado> findAll();
+    List<AfiliadoDTO> findAll();
 
-    Afiliado save(Afiliado afiliado) throws Exception;
+    AfiliadoDTO save(AfiliadoDTO affiliated) throws IllegalArgumentException;
 
-    Optional<Afiliado> findByTpoDocAndDoc (Afiliado afiliado);
+    Optional<AfiliadoDTO> findByTpoDocAndDoc (AfiliadoDTO affiliated);
 
-    Afiliado update(Long id, Afiliado afiliado) throws Exception;
+    AfiliadoDTO update(Long id, AfiliadoDTO affiliated) throws IllegalArgumentException;
 }

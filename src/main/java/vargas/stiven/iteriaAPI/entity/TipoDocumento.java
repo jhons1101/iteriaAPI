@@ -24,4 +24,8 @@ public class TipoDocumento {
 
     @Enumerated(EnumType.ORDINAL)
     private EstadoEnum tdc_estado;
+
+    public TipoDocumento(Long tdc_id) {
+        this.tdc_id = tdc_id;
+    }
 }

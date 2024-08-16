@@ -2,17 +2,21 @@ package vargas.stiven.iteriaAPI.services.afiliado;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vargas.stiven.iteriaAPI.dto.AfiliadoDTO;
 import vargas.stiven.iteriaAPI.entity.Afiliado;
-import vargas.stiven.iteriaAPI.entity.Contrato;
 import vargas.stiven.iteriaAPI.entity.EstadoEnum;
 import vargas.stiven.iteriaAPI.entity.TipoDocumento;
+import vargas.stiven.iteriaAPI.mappers.AfiliadoMapper;
 import vargas.stiven.iteriaAPI.repository.AfiliadoRepository;
 import vargas.stiven.iteriaAPI.repository.ContratoRepository;
 import vargas.stiven.iteriaAPI.repository.TipoDocumentoRepository;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 @Service
 public class AfiladoServiceImpl implements AfiliadoService {
@@ -26,94 +30,123 @@ public class AfiladoServiceImpl implements AfiliadoService {
     @Autowired
     ContratoRepository contratoRepository;
 
-    @Override
-    public List<Afiliado> findAll() {
-        return afiliadoRepository.findAll();
-    }
+    @Autowired
+    AfiliadoMapper afiliadoMapper;
 
     @Override
-    public Afiliado save (Afiliado afiliado) throws Exception {
-        this.validaAfiliado(afiliado, true, null);
-        return afiliadoRepository.save(afiliado);
-    }
-
-    public Optional<Afiliado> findByTpoDocAndDoc(Afiliado afiliado) {
-        return afiliadoRepository.findByTpoDocAndDoc(afiliado.getTdc_id(), afiliado.getAfi_documento());
-    }
-
-    public Optional<Afiliado> findByTpoDocAndDocWhenIsNotSame(Afiliado afiliado, Long id) {
-        return afiliadoRepository.findByTpoDocAndDocWhenIsNotSame(afiliado.getTdc_id().getTdc_id(), afiliado.getAfi_documento(), id);
+    public List<AfiliadoDTO> findAll() {
+        List<Afiliado> afiliadoList = afiliadoRepository.findAll();
+        if (afiliadoList.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return afiliadoList.stream()
+                    .map(afi -> afiliadoMapper.mapToAfiliadoDTO(afi))
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override
-    public Afiliado update(Long id, Afiliado afiliado) throws Exception {
+    public AfiliadoDTO save (AfiliadoDTO affiliated) throws IllegalArgumentException {
+        try {
+            this.validaAfiliado(affiliated, true, null);
 
-        Optional<Afiliado> afiliadoDB = afiliadoRepository.findById(id);
-        if (afiliadoDB.isEmpty()) {
-            throw new Exception("El afiliado con id " + id + "no existe");
+            // Convert AfiliadoDto to Afiliado JPA Entity
+            Afiliado affiliatedEntity = afiliadoMapper.mapToAfiliado(affiliated);
+
+            Afiliado savedAfiliado = afiliadoRepository.save(affiliatedEntity);
+
+            // Convert Afiliado JPA entity to AfiliadoDto
+            return afiliadoMapper.mapToAfiliadoDTO(savedAfiliado);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
-
-        if (afiliado.getTdc_id() != null) {
-            afiliadoDB.get().setTdc_id(afiliado.getTdc_id());
-        }
-
-        if (afiliado.getAfi_apellidos() != null && !afiliado.getAfi_apellidos().isEmpty()) {
-            afiliadoDB.get().setAfi_apellidos(afiliado.getAfi_apellidos());
-        }
-
-        if (afiliado.getAfi_nombre() != null && !afiliado.getAfi_nombre().isEmpty()) {
-            afiliadoDB.get().setAfi_nombre(afiliado.getAfi_nombre());
-        }
-
-        if (afiliado.getAfi_direccion() != null && !afiliado.getAfi_direccion().isEmpty()) {
-            afiliadoDB.get().setAfi_direccion(afiliado.getAfi_direccion());
-        }
-
-        if (afiliado.getAfi_documento() != null && !afiliado.getAfi_documento().isEmpty()) {
-            afiliadoDB.get().setAfi_documento(afiliado.getAfi_documento());
-        }
-
-        if (afiliado.getAfi_mail() != null && !afiliado.getAfi_mail().isEmpty()) {
-            afiliadoDB.get().setAfi_mail(afiliado.getAfi_mail());
-        }
-
-        if (afiliado.getAfi_telefono() != null && !afiliado.getAfi_telefono().isEmpty()) {
-            afiliadoDB.get().setAfi_telefono(afiliado.getAfi_telefono());
-        }
-
-        if (afiliado.getAfi_estado() != null) {
-            afiliadoDB.get().setAfi_estado(afiliado.getAfi_estado());
-        }
-
-        validaAfiliado(afiliadoDB.get(), false, id);
-        afiliadoRepository.save(afiliadoDB.get());
-
-        if (afiliado.getAfi_estado() != null && afiliado.getAfi_estado().equals(EstadoEnum.INACTIVO)) {
-            contratoRepository.updateWithdrawalDateByAfiId(afiliadoDB.get().getAfi_id());
-        }
-        return afiliadoRepository.findById(id).get();
-
     }
 
-    private void validaAfiliado(Afiliado afiliado, Boolean flg_create, Long id) throws Exception {
+    public Optional<AfiliadoDTO> findByTpoDocAndDoc(AfiliadoDTO affiliated) {
+        Optional<Afiliado> affiliatedEntity = afiliadoRepository.findByTpoDocAndDoc(affiliated.getTdc_id(), affiliated.getAfi_documento());
+        return affiliatedEntity.map(afiliado -> afiliadoMapper.mapToAfiliadoDTO(afiliado));
+    }
 
-        Optional<TipoDocumento> tipoDoc = tipoDocumentoRepository.findById(afiliado.getTdc_id().getTdc_id());
+    public Optional<AfiliadoDTO> findByTpoDocAndDocWhenIsNotSame(AfiliadoDTO afiliadoDto, Long id) {
+        Optional<Afiliado> afiliadoEntity =  afiliadoRepository.findByTpoDocAndDocWhenIsNotSame(afiliadoDto.getTdc_id(), afiliadoDto.getAfi_documento(), id);
+        return afiliadoEntity.map(afiliado -> afiliadoMapper.mapToAfiliadoDTO(afiliado));
+    }
+
+    @Override
+    public AfiliadoDTO update(Long id, AfiliadoDTO affiliated) throws IllegalArgumentException {
+
+        try {
+            Optional<Afiliado> afiliadoDB = afiliadoRepository.findById(id);
+            if (afiliadoDB.isEmpty()) {
+                throw new IllegalArgumentException("El afiliado con id " + id + "no existe");
+            }
+
+            if (affiliated.getAfi_apellidos() != null && !affiliated.getAfi_apellidos().isEmpty()) {
+                afiliadoDB.get().setAfi_apellidos(affiliated.getAfi_apellidos());
+            }
+
+            if (affiliated.getAfi_nombre() != null && !affiliated.getAfi_nombre().isEmpty()) {
+                afiliadoDB.get().setAfi_nombre(affiliated.getAfi_nombre());
+            }
+
+            if (affiliated.getAfi_direccion() != null && !affiliated.getAfi_direccion().isEmpty()) {
+                afiliadoDB.get().setAfi_direccion(affiliated.getAfi_direccion());
+            }
+
+            if (affiliated.getAfi_documento() != null && !affiliated.getAfi_documento().isEmpty()) {
+                afiliadoDB.get().setAfi_documento(affiliated.getAfi_documento());
+            }
+
+            if (affiliated.getAfi_mail() != null && !affiliated.getAfi_mail().isEmpty()) {
+                afiliadoDB.get().setAfi_mail(affiliated.getAfi_mail());
+            }
+
+            if (affiliated.getAfi_telefono() != null && !affiliated.getAfi_telefono().isEmpty()) {
+                afiliadoDB.get().setAfi_telefono(affiliated.getAfi_telefono());
+            }
+
+            if (affiliated.getAfi_estado() != null) {
+                afiliadoDB.get().setAfi_estado(affiliated.getAfi_estado());
+            }
+
+            validaAfiliado(affiliated, false, id);
+
+            if (affiliated.getTdc_id() != null) {
+                Optional<TipoDocumento> tipoDoc = tipoDocumentoRepository.findById(affiliated.getTdc_id());
+                tipoDoc.ifPresent(tipoDocumento -> afiliadoDB.get().setTdc_id(tipoDocumento));
+            }
+
+            afiliadoRepository.save(afiliadoDB.get());
+
+            if (affiliated.getAfi_estado() != null && affiliated.getAfi_estado().equals(EstadoEnum.INACTIVO)) {
+                contratoRepository.updateWithdrawalDateByAfiId(afiliadoDB.get().getAfi_id());
+            }
+
+            return afiliadoMapper.mapToAfiliadoDTO(afiliadoDB.get());
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
+    }
+
+    private void validaAfiliado(AfiliadoDTO affiliated, Boolean flgCreate, Long id) throws IllegalArgumentException {
+
+        Optional<TipoDocumento> tipoDoc = tipoDocumentoRepository.findById(affiliated.getTdc_id());
 
         if (tipoDoc.isEmpty()) {
-            throw new Exception("No se puede insertar el Afiliado, el estado del tipo de documento no existe");
+            throw new IllegalArgumentException("No se puede insertar el Afiliado, el estado del tipo de documento no existe");
         } else if (!tipoDoc.get().getTdc_estado().equals(EstadoEnum.ACTIVO)) {
-            throw new Exception("No se puede insertar el Afiliado, el estado del tipo de documento está inactivo");
+            throw new IllegalArgumentException("No se puede insertar el Afiliado, el estado del tipo de documento está inactivo");
         }
 
-        Optional<Afiliado> Afiliado = Optional.empty();
+        Optional<AfiliadoDTO> affiliatedDB;
 
-        if (flg_create) {
-            Afiliado = this.findByTpoDocAndDoc(afiliado);
+        if (Boolean.TRUE.equals(flgCreate)) {
+            affiliatedDB = this.findByTpoDocAndDoc(affiliated);
         } else {
-            Afiliado = this.findByTpoDocAndDocWhenIsNotSame(afiliado, id);
+            affiliatedDB = this.findByTpoDocAndDocWhenIsNotSame(affiliated, id);
         }
-        if (!Afiliado.isEmpty()) {
-            throw new Exception("Ya existe un afiliado con el mismo tipo y numero de documento");
+        if (affiliatedDB.isPresent()) {
+            throw new IllegalArgumentException("Ya existe un afiliado con el mismo tipo y numero de documento");
         }
     }
 }
