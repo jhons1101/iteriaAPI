@@ -2,9 +2,7 @@ package vargas.stiven.iteriaAPI.services.tipoDocumento;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vargas.stiven.iteriaAPI.dto.AfiliadoDTO;
 import vargas.stiven.iteriaAPI.dto.TipoDocumentoDTO;
-import vargas.stiven.iteriaAPI.entity.Afiliado;
 import vargas.stiven.iteriaAPI.entity.EstadoEnum;
 import vargas.stiven.iteriaAPI.entity.TipoDocumento;
 import vargas.stiven.iteriaAPI.mappers.TipoDocumentoMapper;

@@ -8,6 +8,7 @@ import vargas.stiven.iteriaAPI.entity.TipoDocumento;
 import vargas.stiven.iteriaAPI.repository.TipoDocumentoRepository;
 
 import java.util.Optional;
+
 @Component
 public class AfiliadoMapper {
 

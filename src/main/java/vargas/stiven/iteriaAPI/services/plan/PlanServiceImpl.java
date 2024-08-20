@@ -60,7 +60,7 @@ public class PlanServiceImpl implements PlanService {
     private void planValidate(PlanDTO plan, Boolean flgCreate, Long id) {
 
         if (plan.getPln_estado() == null || plan.getPln_estado().equals("")) {
-            plan.setPln_estado(0L); //EstadoEnum.INACTIVO
+            plan.setPln_estado(EstadoEnum.INACTIVO);
         }
 
         if (plan.getPln_nombre() == null || plan.getPln_nombre() == "" || plan.getPln_nombre().isEmpty()) {

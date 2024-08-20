@@ -20,26 +20,7 @@ public class PlanMapper {
                 plan.getPln_nombre(),
                 plan.getPln_fecha_inicio(),
                 plan.getPln_fecha_fin(),
-                plan.getPln_estado().equals(EstadoEnum.ACTIVO) ? 1L : 0L
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                plan.getPln_estado()
         );
     }
 
@@ -51,7 +32,7 @@ public class PlanMapper {
                 planDto.getPln_nombre(),
                 planDto.getPln_fecha_inicio(),
                 planDto.getPln_fecha_fin(),
-                planDto.getPln_estado().equals(1L) ? EstadoEnum.ACTIVO : EstadoEnum.INACTIVO
+                planDto.getPln_estado()
         );
     }
 }
