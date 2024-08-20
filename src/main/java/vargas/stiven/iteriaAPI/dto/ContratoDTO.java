@@ -1,38 +1,26 @@
-package vargas.stiven.iteriaAPI.entity;
+package vargas.stiven.iteriaAPI.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-@Entity
-@Table(name="contrato")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class Contrato {
+public class ContratoDTO {
 
-    @Id
     @Schema(example = "pk Contrato table")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cto_id;
 
-    @JoinColumn(name = "afi_id")
     @Schema(example = "fk Afiliado table")
-    @ManyToOne(targetEntity = Afiliado.class, fetch = FetchType.LAZY)
-    private Afiliado afi_id;
+    private Long afi_id;
 
-    @JoinColumn(name = "pln_id")
     @Schema(example = "fk Plan table")
-    @ManyToOne(targetEntity = Plan.class, fetch = FetchType.LAZY)
-    private Plan pln_id;
+    private Long pln_id;
 
     @Min(0)
     @Max(100)

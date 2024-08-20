@@ -1,21 +1,21 @@
 package vargas.stiven.iteriaAPI.services.contrato;
 
-import vargas.stiven.iteriaAPI.entity.Contrato;
+import vargas.stiven.iteriaAPI.dto.ContratoDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface ContratoService {
 
-    List<Contrato> findAll();
+    List<ContratoDTO> findAll();
 
-    Contrato save(Contrato contrato) throws Exception;
+    ContratoDTO save(ContratoDTO contratoDto) throws IllegalArgumentException;
 
-    Optional<Contrato> findByPlnIDAndByAfiId(Contrato contrato);
+    Optional<ContratoDTO> findByPlnIDAndByAfiId(ContratoDTO contratoDto);
 
-    Contrato update(Long id, Contrato contrato) throws Exception;
+    ContratoDTO update(Long id, ContratoDTO contratoDto) throws IllegalArgumentException;
 
-    List<Contrato> findByAfiId (Long afiId);
+    List<ContratoDTO> findByAfiId (Long afiId);
 
     void updateWithdrawalDateByAfiId(Long afiId);
 }
